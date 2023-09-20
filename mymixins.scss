@@ -19,9 +19,12 @@
 // 3040px 190rem 
 // https://mediag.com/wp-content/uploads/2018/03/MG_Popular_Screen_Resolutions_PDF.pdf
 
+//   @media not|only mediatype and (expressions) {
+//     CSS-Code;
+//   }
 
 @mixin for-size($a, $b, $c: '') {
-    $rule: '';
+    $expr: '';
     $mtype: '';
 
     @if ($c) {
@@ -30,7 +33,7 @@
 
     @if(($a ==min) or ($a ==max)) {
         @if(type-of($b)=='number') {
-            $rule: $rule + " (" + $a + "-width:"$b*16px + ")";
+            $expr: $expr + " (" + $a + "-width:"$b*16px + ")";
         }
     }
 
@@ -39,8 +42,8 @@
 
     ) {
         @if($a < $b ) {
-            $rule: $rule + ' (min-width: ' + $a*16px;
-            $rule: $rule + ') and (max-width:' + $b*16px + ")";
+            $expr: $expr + ' (min-width: ' + $a*16px;
+            $expr: $expr + ') and (max-width:' + $b*16px + ")";
         }
 
         @else {
@@ -48,9 +51,9 @@
         }
     }
 
-    $ccc: #{$mtype} #{$rule};
+    $mtypeexpr: #{$mtype} #{$expr};
 
-    @media #{$ccc} {
+    @media #{$mtypeexpr} {
         @content;
     }
 }
@@ -90,18 +93,22 @@
 
 //what should be the basic font size to have X px on Y width (with rfs)
 
-@function HTMLrfsFS($fs_on_a_width, $fs_on_b_width, $a_width, $b_width, $stop_width:0px){
-  $width_diff: $b_width - $a_width;
-  $size_diff:  $fs_on_b_width - $fs_on_a_width;
-  $size_change_per_px: math.div($size_diff,$width_diff);
-  $start_fs: ($fs_on_a_width - ($a_width * $size_change_per_px));
-  @if($stop_width==0px){
-    $calc: 'calc('+$start_fs+' + '+($size_change_per_px*100)+'vw)';
+@function HTMLrfsFS($fs_on_a_width, $fs_on_b_width, $a_width, $b_width, $stop_width: 0px) {
+    $width_diff: $b_width - $a_width;
+    $size_diff: $fs_on_b_width - $fs_on_a_width;
+    $size_change_per_px: math.div($size_diff, $width_diff);
+    $start_fs: (
+        $fs_on_a_width - ($a_width * $size_change_per_px)
+    );
+
+@if($stop_width==0px) {
+    $calc: 'calc(' +$start_fs+' + ' +($size_change_per_px*100)+'vw)';
     @return unquote($calc);
-  }
-  @else{
+}
+
+@else {
     @return ($stop_width*$size_change_per_px)+$start_fs;
-  }
+}
 }
 
 /* ===== Usage ===== */
@@ -127,6 +134,7 @@
     width: $width;
     height: $height;
 }
+
 /* ===== Usage ===== */
 // .a{
 //     @include box(200px);
@@ -148,16 +156,23 @@
 
 // margin, padding, border-width etc...
 @function unpack-shorthand($sh) {
-    @if length($sh) == 1 { 
-      @return nth($sh, 1) nth($sh, 1) nth($sh, 1) nth($sh, 1);
-    } @else if length($sh) == 2 {
-       @return nth($sh, 1) nth($sh, 2) nth($sh, 1) nth($sh, 2);
-    } @else if length($sh) == 3 {
-       @return nth($sh, 1) nth($sh, 2) nth($sh, 3) nth($sh, 2);
-    } @else {
-       @return $sh;
+    @if length($sh)==1 {
+        @return nth($sh, 1) nth($sh, 1) nth($sh, 1) nth($sh, 1);
+    }
+
+    @else if length($sh)==2 {
+        @return nth($sh, 1) nth($sh, 2) nth($sh, 1) nth($sh, 2);
+    }
+
+    @else if length($sh)==3 {
+        @return nth($sh, 1) nth($sh, 2) nth($sh, 3) nth($sh, 2);
+    }
+
+    @else {
+        @return $sh;
     }
 }
+
 /* ===== Usage ===== */
 // .a{
 //     margin: unpack-shorthand(0);
@@ -192,11 +207,12 @@
 @mixin position($position, $box-edge-values) {
     position: $position;
     $box-edge-values: unpack-shorthand($box-edge-values);
-    top:    nth($box-edge-values, 1);
-    right:  nth($box-edge-values, 2);
+    top: nth($box-edge-values, 1);
+    right: nth($box-edge-values, 2);
     bottom: nth($box-edge-values, 3);
-    left:   nth($box-edge-values, 4);
-  }
+    left: nth($box-edge-values, 4);
+}
+
 /* ===== Usage ===== */
 //   div{
 //       @include position(absolute, 20% 10%);
@@ -215,29 +231,33 @@
 @mixin flex-column {
     display: flex;
     flex-direction: column;
-  }
-  @mixin flex-center {
+}
+
+@mixin flex-center {
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  @mixin flex-center-column {
+}
+
+@mixin flex-center-column {
     @include flex-center;
     flex-direction: column;
-  }
-  @mixin flex-center-vert {
+}
+
+@mixin flex-center-vert {
     display: flex;
     align-items: center;
-  }
-  @mixin flex-center-horiz {
+}
+
+@mixin flex-center-horiz {
     display: flex;
     justify-content: center;
-  }
-  
+}
+
 // Mivel a flexbox axis- és bázisrendszerként működik, 
 // ha a flex-direction megváltozik, akkor felcseréljük
 // a tengelyt, ezért az ellenkezőjét kell használni, így:
-  
+
 /* ===== Usage ===== */
 //   .vertical-centered-element {
 //     @include flex-center-vert;
@@ -258,11 +278,12 @@
 //   }
 
 /* ===== COVER-BACKGROUND ===== */
-  @mixin cover-background($bgpos: center){
+@mixin cover-background($bgpos: center) {
     background-repeat: no-repeat;
     background-size: cover;
     background-position: $bgpos;
-  }
+}
+
 /* ===== Usage ===== */
 //   .a{
 //     height:50vh;
@@ -300,18 +321,19 @@
 
 // REQUIRE: BOX
 
-@mixin pseudo(
-  $width: 100%,
-  $height: 100%,
-  $display: inline-block,
-  $pos: absolute,
-  $content: ""
+@mixin pseudo($width: 100%,
+    $height: 100%,
+    $display: inline-block,
+    $pos: absolute,
+    $content: ""
+
 ) {
-  content: $content;
-  display: $display;
-  position: $pos;
-  @include box($width, $height);
+    content: $content;
+    display: $display;
+    position: $pos;
+    @include box($width, $height);
 }
+
 /* ===== Usage ===== */
 // div {
 //   position: relative;
@@ -341,9 +363,11 @@
 //  a tömb indexének megkeresésére.
 
 $elements: landing, header, modal, very-important-modal;
+
 @mixin z-index($id) {
-  z-index: index($elements, $id);
+    z-index: index($elements, $id);
 }
+
 /* ===== Usage ===== */
 //  .modal{
 //      @include z-index(modal);    // 3
@@ -358,16 +382,19 @@ $elements: landing, header, modal, very-important-modal;
 /* ===== FADE ===== */
 
 @mixin fade($type) {
-    @if $type== "hide" {
-      visibility: hidden;
-      opacity: 0;
-      transition: visibility 1s, opacity 1s;
-    } @else if $type== "show" {
-      visibility: visible;
-      opacity: 1;
-      transition: visibility 1s, opacity 1s;
+    @if $type=="hide" {
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 1s, opacity 1s;
+    }
+
+    @else if $type=="show" {
+        visibility: visible;
+        opacity: 1;
+        transition: visibility 1s, opacity 1s;
     }
 }
+
 /* ===== Usage ===== */
 //   div.hide{
 //     @include fade(hide); 
@@ -381,7 +408,7 @@ $elements: landing, header, modal, very-important-modal;
 //     opacity: 0;
 //     transition: visibility 1s, opacity 1s;
 //   }
-  
+
 //   div {
 //     visibility: visible;
 //     opacity: 1;
