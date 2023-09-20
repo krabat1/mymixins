@@ -1,3 +1,10 @@
+@use "sass:math";
+
+// https://sass-lang.com/documentation/at-rules/import/
+// put it here: src/assets/scss/partials/mymixins.scss
+// @import '../src/assets/scss/patials/_variable.scs';
+// Only Import In style.scss effect all over project
+
 /* ===== MEDIA QUERIES ===== */
 
 // 320px 20rem
@@ -101,14 +108,14 @@
         $fs_on_a_width - ($a_width * $size_change_per_px)
     );
 
-@if($stop_width==0px) {
-    $calc: 'calc(' +$start_fs+' + ' +($size_change_per_px*100)+'vw)';
-    @return unquote($calc);
-}
+    @if($stop_width==0px) {
+        $calc: 'calc(' +$start_fs+' + ' +($size_change_per_px*100)+'vw)';
+        @return unquote($calc);
+    }
 
-@else {
-    @return ($stop_width*$size_change_per_px)+$start_fs;
-}
+    @else {
+        @return ($stop_width*$size_change_per_px)+$start_fs;
+    }
 }
 
 /* ===== Usage ===== */
@@ -278,6 +285,7 @@
 //   }
 
 /* ===== COVER-BACKGROUND ===== */
+
 @mixin cover-background($bgpos: center) {
     background-repeat: no-repeat;
     background-size: cover;
