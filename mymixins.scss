@@ -1,0 +1,71 @@
+/* ===== MEDIA QUERIES ===== */
+
+// 320px 20rem
+// 480px 30rem
+// 640px 40rem
+// 768px 48rem
+// 800px 50rem
+// 960px 60rem
+// 1024px 64rem
+// 1280px 80rem
+// 1360px 85rem
+// 1440px 90rem
+// 1536px 96rem
+// 1920px 120rem
+// 2046px 128rem
+// 2160px 135rem
+// 2560px 160rem
+// 2960px 185rem
+// 3040px 190rem 
+// https://mediag.com/wp-content/uploads/2018/03/MG_Popular_Screen_Resolutions_PDF.pdf
+
+
+@mixin for-size($a, $b, $c: '') {
+    $rule: '';
+    $mtype: '';
+
+    @if ($c) {
+        $mtype: $c;
+    }
+
+    @if(($a ==min) or ($a ==max)) {
+        @if(type-of($b)=='number') {
+            $rule: $rule + " (" + $a + "-width:"$b*16px + ")";
+        }
+    }
+
+    @else if(type-of($a)=='number'
+        and type-of($b)=='number'
+
+    ) {
+        @if($a < $b ) {
+            $rule: $rule + ' (min-width: ' + $a*16px;
+            $rule: $rule + ') and (max-width:' + $b*16px + ")";
+        }
+
+        @else {
+            @debug "min>max";
+        }
+    }
+
+    $ccc: #{$mtype} #{$rule};
+
+    @media #{$ccc} {
+        @content;
+    }
+}
+
+/* ===== Usage ===== */
+// .stg2 {
+//     @include for-size(max, 12, 'all and') {
+//         color: red;
+//     }
+
+//     @include for-size(min, 10, 'screen and') {
+//         color: blue;
+//     }
+
+//     @include for-size(8, 10, 'screen and') {
+//         color: green;
+//     }
+// }
