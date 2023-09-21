@@ -109,7 +109,7 @@
     );
 
     @if($stop_width==0px) {
-        $calc: 'calc(' +$start_fs+' + ' +($size_change_per_px*100)+'vw)';
+        $calc: 'calc(' + $start_fs + ' + ' + $size_change_per_px * 100 + 'vw)';
         @return unquote($calc);
     }
 
